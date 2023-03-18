@@ -40,7 +40,7 @@ func (c *Client) Refresh() error {
 		return fmt.Errorf("pem.Decode(KeyPEM) failed")
 	}
 
-	pk, err := x509.ParsePKCS8PrivateKey(p.Bytes)
+	key, err := x509.ParsePKCS8PrivateKey(p.Bytes)
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func (c *Client) Refresh() error {
 
 	token.Header["kid"] = c.KeyID
 
-	clientSecret, err := token.SignedString(pk)
+	clientSecret, err := token.SignedString(key)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (c *Client) Refresh() error {
 		return err
 	}
 
-	c.key = pk
+	c.key = key
 	c.clientSecret = clientSecret
 	c.accessToken = resp.AccessToken
 
